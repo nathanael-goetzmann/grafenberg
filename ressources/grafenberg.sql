@@ -150,26 +150,6 @@ INSERT INTO affecter VALUES
 (29, 1), (29, 3), (29, 30),
 (30, 16), (30, 13);
 
-DELIMITER //
-
-CREATE PROCEDURE select_bloc(IN p_bloc_num SMALLINT)
-BEGIN
-
-	SELECT *
-	FROM bloc
-	WHERE bloc_num = p_bloc_num;
-
-END//
-
-CREATE PROCEDURE select_type_operation(IN p_top_num SMALLINT)
-BEGIN
-
-	SELECT * FROM type_operation WHERE top_num = p_top_num;
-
-END//
-
-DELIMITER ;
-
 DROP USER IF EXISTS 'javagraf'@'%';
 CREATE USER 'javagraf'@'%' IDENTIFIED BY 'kO7ù6Ha*Hj43';
 GRANT SELECT, EXECUTE ON grafenberg.* TO 'javagraf'@'%';
