@@ -1,6 +1,6 @@
 package grafenberg.app.modeles;
-import java.sql.Date;
-
+import java.util.ArrayList;
+import java.util.Date;
 public class Intervention {
 
     private int id;
@@ -9,15 +9,26 @@ public class Intervention {
     private int duree;
     private String topNum; 
     private TypeOperation typeOperation;
+    private ArrayList<Personnel> personnels;
 
-    public Intervention(int id, Date date, int nuit, int duree, String topNum, TypeOperation typeOperation) {
+    public Intervention(int id, Date date, int nuit, int duree, String topNum, TypeOperation typeOperation, ArrayList<Personnel> personnels) {
         this.id = id;
         this.date = date;
         this.nuit = nuit;
         this.duree = duree;
         this.topNum = topNum;
         this.typeOperation = typeOperation;
+        this.personnels = personnels;
     }
+
+    public ArrayList<Personnel> getPersonnels() {
+        return personnels;
+    }
+
+    public void setPersonnels(ArrayList<Personnel> personnels) {
+        this.personnels = personnels;
+    }
+
 
     public TypeOperation getTypeOperation() {
         return typeOperation;
