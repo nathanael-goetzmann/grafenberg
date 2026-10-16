@@ -17,18 +17,19 @@ public class CategoriePersonnelDAO {
 
     public ResultSet getAllCategoriePersonnel() throws SQLException {
 
-        String query = "SELECT * FROM categorie_personnel"
+        String query = "SELECT * FROM categorie_personnel";
 
-        PreparedStatement statement = connection.preparedStatement(query);
+        PreparedStatement statement = connection.prepareStatement(query);
 
         return statement.executeQuery();
     }
 
-    public ResultSet getOneCategoriePersonnel(categorie) throws SQLException {
+    public ResultSet getOneCategoriePersonnel(String categorie) throws SQLException {
 
-        String query = "SELECT * FROM categorie_personnel WHERE cay_code = ?"
+        String query = "SELECT * FROM categorie_personnel WHERE cat_code = ?";
 
-        PreparedStatement statement = connection.preparedStatement(query);
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, categorie);
 
         return statement.executeQuery();
     }
