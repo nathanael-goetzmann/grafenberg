@@ -1,6 +1,5 @@
 package grafenberg.app.vue;
 
-import grafenberg.app.modeles.ConnexionDAO;
 import java.sql.SQLException;
 
 public class Main {

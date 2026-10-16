@@ -1,4 +1,4 @@
-package grafenberg.app.modeles;
+package grafenberg.app.vue;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
