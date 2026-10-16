@@ -1,9 +1,11 @@
 
 package grafenberg.app.modeles;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
 
-import grafenberg.app.vue.ConnexionDAO;
-
-import java.sql.*;
 
 public class PersonnelDAO {
 
