@@ -28,16 +28,16 @@ public class InterventionDAO {
         return statement.executeQuery();
     }
 
-    public boolean insererIntervention(Date date, int nuit, int duree, String topNum) throws SQLException {
-        String query = "INSERT INTO intervention (date, nuit, duree, topNum) VALUES (?, ?, ?, ?)";
+    public boolean insererIntervention(Date date, int nuit, int duree, String topNum) throws SQLException { 
+    String query = "INSERT INTO intervention (date, nuit, duree, topNum) VALUES (?, ?, ?, ?)"; 
+    
+    try (PreparedStatement statement = connection.getPreparedStatement(query)) { 
+        statement.setDate(1, date);
+        statement.setInt(2, nuit); 
+        statement.setInt(3, duree); 
+        statement.setString(4, topNum); 
         
-        try (PreparedStatement statement = connection.getPreparedStatement(query)) {
-            statement.setDate(1, date);
-            statement.setInt(2, nuit);
-            statement.setInt(3, duree);
-            statement.setString(4, topNum);
-            
-            return statement.executeUpdate() > 0;
-        }
-    }
+        return statement.executeUpdate() > 0; 
+    } 
+}
 }
