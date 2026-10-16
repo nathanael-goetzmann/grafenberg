@@ -1,1 +1,1 @@
-chaque dao instancier connexionDAO il se connecte a la baqe
+chaque dao instancier connexionDAO il se connecte a la base
