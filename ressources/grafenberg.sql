@@ -152,4 +152,4 @@ INSERT INTO affecter VALUES
 
 DROP USER IF EXISTS 'javagraf'@'%';
 CREATE USER 'javagraf'@'%' IDENTIFIED BY 'kO7ù6Ha*Hj43';
-GRANT SELECT, EXECUTE ON grafenberg.* TO 'javagraf'@'%';
+GRANT SELECT, INSERT, EXECUTE ON grafenberg.* TO 'javagraf'@'%';
