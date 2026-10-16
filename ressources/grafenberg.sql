@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS grafenberg;
-CREATE DATABASE grafenberg;
-USE grafenberg;
+DROP DATABASE IF EXISTS grafenberg01;
+CREATE DATABASE grafenberg01;
+USE grafenberg01;
 
 CREATE TABLE bloc (
 	bloc_num SMALLINT PRIMARY KEY,
@@ -152,4 +152,4 @@ INSERT INTO affecter VALUES
 
 DROP USER IF EXISTS 'javagraf'@'%';
 CREATE USER 'javagraf'@'%' IDENTIFIED BY 'kO7ù6Ha*Hj43';
-GRANT SELECT, INSERT, EXECUTE ON grafenberg.* TO 'javagraf'@'%';
+GRANT SELECT, INSERT, EXECUTE ON grafenberg01.* TO 'javagraf'@'%';
