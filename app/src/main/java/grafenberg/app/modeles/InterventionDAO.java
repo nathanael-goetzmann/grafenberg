@@ -2,6 +2,7 @@ package grafenberg.app.modeles;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.sql.Date;
 
 public class InterventionDAO {
@@ -28,16 +29,24 @@ public class InterventionDAO {
         return statement.executeQuery();
     }
 
-    public boolean insererIntervention(Date date, int nuit, int duree, String topNum) throws SQLException { 
-    String query = "INSERT INTO intervention (date, nuit, duree, topNum) VALUES (?, ?, ?, ?)"; 
+    public void insererIntervention(Date date, int nuit, int duree, String topNum, ArrayList<Personnel> personnel) throws SQLException { 
+    String query = "INSERT INTO intervention (id, date, nuit, duree, topNum) VALUES (default, ?, ?, ?, ?)"; 
     
     try (PreparedStatement statement = connection.getPreparedStatement(query)) { 
         statement.setDate(1, date);
         statement.setInt(2, nuit); 
         statement.setInt(3, duree); 
-        statement.setString(4, topNum); 
-        
-        return statement.executeUpdate() > 0; 
+        statement.setString(4, topNum);
+
+    query = "INSERT INTO affecter (aff_inter_num, aff_per_num) VALUES (default, ?)"; 
+    
+        for (Personnel p : personnel) { 
+                try (PreparedStatement statementp = connection.getPreparedStatement(query)) { 
+
+                    statementp.setInt(1, p.getPer_num()); 
+                    statementp.executeUpdate(); 
+                } 
+            } 
     } 
 }
 }
