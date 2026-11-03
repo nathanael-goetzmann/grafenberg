@@ -9,20 +9,17 @@ import java.sql.CallableStatement;
 
 /**
  * Ce fichier assure la bonne connexion à la base de données
- * « grafenberg01 » de la clinique éponyme.
+ * « grafenberg01 » de la clinique éponyme. Il propose
+ * différentes méthodes publiques qui retournent des objets
+ * de type « Statement », « PreparedStatement » ou « CallableStatement ».<br><br>
+ * Lors de l'instanciation, le constructeur établit automatiquement
+ * la connexion vers la base de données.
  * @author Nathanaël Goetzmann
  * @version v1.0
  * @since 2026-10-15
  */
 
 public final class ConnexionDAO {
-    
-    /**
-     * Cette classe propose des méthodes publiques qui retournent
-     * des objets de type « Statement », « PreparedStatement » ou
-     * « CallableStatement ». Lors de l'instanciation, le constructeur
-     * établit automatiquement la connexion vers la base de données.
-     */
     
     private final Connection connexion;
     

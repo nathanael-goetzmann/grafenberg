@@ -2,18 +2,15 @@ package grafenberg.app.modeles;
 
 /**
  * Ce fichier propose une classe qui représente
- * l'entité « bloc » du diagramme de classes.
+ * l'entité « bloc » du diagramme de classes établi.<br><br>
+ * Les instances de cette classe n'ont pas connaissance
+ * des autres entités.
  * @author Nathanaël Goetzmann
  * @version v1.0
  * @since 2026-10-16
  */
 
 public final class Bloc {
-    
-    /**
-     * Les instances de la classe n'ont pas connaissance
-     * des autres entités.
-     */
     
     private int id;
     private double charges;
@@ -29,7 +26,7 @@ public final class Bloc {
     }
     
     /**
-     * Crée une instance avec des valeurs nulles par défaut.
+     * Crée une instance dont les propriétés sont des valeurs nulles.
      */
     public Bloc() { this(0, 0); }
     

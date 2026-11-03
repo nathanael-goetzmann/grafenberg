@@ -2,18 +2,15 @@ package grafenberg.app.modeles;
 
 /**
  * Ce fichier propose une classe qui représente
- * l'entité « type_operation » du diagramme de classes.
+ * l'entité « type_operation » du diagramme de classes.<br><br>
+ * En plus des propriétés « id » et « charges »,
+ * chaque instance a connaissance d'un objet « Bloc ».
  * @author Nathanaël Goetzmann
  * @version v1.0
  * @since 2026-10-16
  */
 
 public final class TypeOperation {
-    
-    /**
-     * En plus des propriétés « id » et « charges »,
-     * chaque instance a connaissance d'un objet « Bloc ».
-     */
     
     private int id;
     private double charges;
