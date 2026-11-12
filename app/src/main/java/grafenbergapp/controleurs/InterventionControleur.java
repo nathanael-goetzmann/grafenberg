@@ -1,8 +1,8 @@
-package grafenberg.app.controleurs;
+package grafenbergapp.controleurs;
 
-import grafenberg.app.modeles.InterventionDAO;
-import grafenberg.app.modeles.Intervention;
-import grafenberg.app.modeles.Personnel;
+import grafenbergapp.modeles.InterventionDAO;
+import grafenbergapp.modeles.Intervention;
+import grafenbergapp.modeles.Personnel;
 import java.util.ArrayList;
 import java.sql.SQLException;
 import java.sql.ResultSet;
@@ -14,7 +14,7 @@ public final class InterventionControleur {
     private final TypeOperationControleur typeOperationControleur;
     private final PersonnelControleur personnelControleur; 
     
-    public InterventionControleur() {
+    public InterventionControleur() throws SQLException {
         interventionDAO = new InterventionDAO();
         typeOperationControleur = new TypeOperationControleur();
         personnelControleur = new PersonnelControleur();
@@ -32,15 +32,18 @@ public final class InterventionControleur {
                 resultSetInter.getInt("inter_top_id")
         );
         intervention.setTypeOperation(typeOperation);
-
-        var lesPersonnel = new ArrayList<Personnel>();
-        var resultSetPers = interventionDAO.selectTiedPersonnel(intervention.getId());
-        while (resultSetPers.next()) {
-            lesPersonnel.add(
-                    personnelControleur.getOnePersonnel(resultSetPers.getInt("aff_per_id"))
-            );
+        
+        try (var resultSetPers = interventionDAO.selectTiedPersonnel(intervention.getId());) {
+            var lesPersonnel = new ArrayList<Personnel>();
+            
+            while (resultSetPers.next()) {
+                lesPersonnel.add(
+                        personnelControleur.getOnePersonnel(resultSetPers.getInt("aff_per_id"))
+                );
+            }
+            
+            intervention.setLesPersonnel(lesPersonnel);
         }
-        intervention.setLesPersonnel(lesPersonnel);
         
         return intervention;
     }
@@ -63,15 +66,15 @@ public final class InterventionControleur {
         }
     }
     
-    public void postOneIntervention(
+    public void postIntervention(
             Date date,
             boolean nuit,
             int duree,
             int typeOperationId,
-            ArrayList<Integer> lesPersonnelId
+            ArrayList<Integer> lesPersonnelIds
     ) throws SQLException {
         var lesPersonnel = new ArrayList<Personnel>();
-        for (int id : lesPersonnelId) {
+        for (int id : lesPersonnelIds) {
             lesPersonnel.add(personnelControleur.getOnePersonnel(id));
         }
         
@@ -83,6 +86,10 @@ public final class InterventionControleur {
                 typeOperationControleur.getOneTypeOperation(typeOperationId),
                 lesPersonnel
         );
-        interventionDAO.insertOneIntervention(intervention);
+        interventionDAO.insertIntervention(intervention);
+    }
+    
+    public double getCoutIntervention(int id) throws SQLException {
+        return interventionDAO.callCalculerCoutIntervention(id);
     }
 }

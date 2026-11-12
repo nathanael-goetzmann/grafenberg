@@ -1,7 +1,7 @@
-package grafenberg.app.controleurs;
+package grafenbergapp.controleurs;
 
-import grafenberg.app.modeles.PersonnelDAO;
-import grafenberg.app.modeles.Personnel;
+import grafenbergapp.modeles.PersonnelDAO;
+import grafenbergapp.modeles.Personnel;
 import java.util.ArrayList;
 import java.sql.SQLException;
 import java.sql.ResultSet;
@@ -11,7 +11,7 @@ public final class PersonnelControleur {
     private final PersonnelDAO personnelDAO;
     private final CategoriePersonnelControleur categoriePersonnelControleur;
     
-    public PersonnelControleur() {
+    public PersonnelControleur() throws SQLException {
         personnelDAO = new PersonnelDAO();
         categoriePersonnelControleur = new CategoriePersonnelControleur();
     }

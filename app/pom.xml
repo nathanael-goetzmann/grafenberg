@@ -9,7 +9,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>18</maven.compiler.release>
-        <exec.mainClass>grafenberg.app.vue.Main</exec.mainClass>
+        <exec.mainClass>grafenberg.app.vues.Main</exec.mainClass>
     </properties>
 
     <dependencies>
