@@ -1,4 +1,4 @@
-package grafenbergapp.modeles;
+package grafenberg.app.modeles;
 
 import java.util.ArrayList;
 import java.sql.Date;
