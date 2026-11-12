@@ -1,67 +1,31 @@
 package grafenberg.app.modeles;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.DriverManager;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.CallableStatement;
 
-/**
- * Ce fichier assure la bonne connexion à la base de données
- * « grafenberg01 » de la clinique éponyme. Il propose
- * différentes méthodes publiques qui retournent des objets
- * de type « Statement », « PreparedStatement » ou « CallableStatement ».<br><br>
- * Lors de l'instanciation, le constructeur établit automatiquement
- * la connexion vers la base de données.
- * @author Nathanaël Goetzmann
- * @version v1.0
- * @since 2026-10-15
- */
-
 public final class ConnexionDAO {
     
-    private final Connection connexion;
+    private final String PATH = "jdbc:mysql://192.168.5.120:3307/grafenberg01";
+    private final String USER = "javagraf";
+    private final String PASS = "kO7ù6Ha*Hj43";
     
-    /**
-     * Crée une instance dont la propriété « connexion » comporte
-     * d'office une connexion à la base « grafenberg01 ».
-     * @throws SQLException doit être gérée par la vue
-     */
-    public ConnexionDAO() throws SQLException {
-        connexion = DriverManager.getConnection(
-                "jdbc:mysql://192.168.5.120:3307/grafenberg01",
-                "javagraf",
-                "kO7ù6Ha*Hj43"
-        );
+    private Connection createConnection() throws SQLException {
+        return DriverManager.getConnection(PATH, USER, PASS);
     }
     
-    /**
-     * Fournit un objet de type « Statement ».
-     * @return Statement 
-     * @throws SQLException doit être gérée par la vue
-     */
-    public Statement getSimpleStatement() throws SQLException {
-        return connexion.createStatement();
+    public Statement getStatement() throws SQLException {
+        return createConnection().createStatement();
     }
     
-    /**
-     * Fournit un objet de type « PreparedStatement ».
-     * @param requete représente la requête SQL à exécuter
-     * @return PreparedStatement
-     * @throws SQLException doit être gérée par la vue
-     */
     public PreparedStatement getPreparedStatement(String requete) throws SQLException {
-        return connexion.prepareStatement(requete);
+        return createConnection().prepareStatement(requete, Statement.RETURN_GENERATED_KEYS);
     }
     
-    /**
-     * Fournit un objet de type « CallableStatement ».
-     * @param requete représente la requête SQL à exécuter
-     * @return CallableStatement
-     * @throws SQLException doit être gérée par la vue
-     */
     public CallableStatement getCallableStatement(String requete) throws SQLException {
-        return connexion.prepareCall(requete);
+        return createConnection().prepareCall(requete);
     }
 }
