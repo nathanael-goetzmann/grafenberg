@@ -3,39 +3,40 @@ CREATE DATABASE grafenberg01;
 USE grafenberg01;
 
 CREATE TABLE bloc (
-	bloc_num SMALLINT PRIMARY KEY,
+	bloc_id INTEGER PRIMARY KEY,
 	bloc_charges DECIMAL(7,2) NOT NULL
 );
 
 CREATE TABLE type_operation (
-	top_num SMALLINT PRIMARY KEY,
+	top_id INTEGER PRIMARY KEY,
+	top_nom VARCHAR(20) NOT NULL,
 	top_charges DECIMAL(7,2) NOT NULL,
-	top_bloc_num SMALLINT NOT NULL REFERENCES bloc (bloc_num)
+	top_bloc_id INTEGER NOT NULL REFERENCES bloc (bloc_id)
 );
 
 CREATE TABLE intervention (
-	inter_num INTEGER PRIMARY KEY,
+	inter_id INTEGER PRIMARY KEY AUTO_INCREMENT,
 	inter_date DATE NOT NULL,
 	inter_nuit BOOLEAN NOT NULL,
-	inter_duree SMALLINT NOT NULL,
-	inter_top_num SMALLINT NOT NULL REFERENCES type_operation (top_num)
+	inter_duree INTEGER NOT NULL,
+	inter_top_id INTEGER NOT NULL REFERENCES type_operation (top_id)
 );
 
 CREATE TABLE categorie_personnel (
 	cat_code CHAR(1) PRIMARY KEY,
-	cat_cout_horaire SMALLINT NOT NULL
+	cat_cout_horaire DECIMAL(7,2) NOT NULL
 );
 
 CREATE TABLE personnel (
-	per_num SMALLINT PRIMARY KEY,
+	per_id INTEGER PRIMARY KEY AUTO_INCREMENT,
 	per_nom VARCHAR(20) NOT NULL,
 	per_cat_code CHAR(1) NOT NULL REFERENCES categorie_personnel (cat_code)
 );
 
 CREATE TABLE affecter (
-	aff_inter_num INTEGER REFERENCES intervention (inter_num),
-	aff_per_num SMALLINT REFERENCES personnel (per_num),
-	PRIMARY KEY (aff_inter_num, aff_per_num)
+	aff_inter_id INTEGER REFERENCES intervention (inter_id),
+	aff_per_id INTEGER REFERENCES personnel (per_id),
+	PRIMARY KEY (aff_inter_id, aff_per_id)
 );
 
 INSERT INTO bloc VALUES
@@ -44,42 +45,42 @@ INSERT INTO bloc VALUES
 (3, 1700.00);
 
 INSERT INTO type_operation VALUES
-(1, 152.00, 2),
-(2, 225.00, 2),
-(3, 343.00, 3),
-(4, 549.00, 1);
+(1, 'Orthopédie', 152.00, 2),
+(2, 'Plastique', 225.00, 2),
+(3, 'Neurologie', 343.00, 3),
+(4, 'Urologie', 549.00, 1);
 
 INSERT INTO intervention VALUES
-(1, '2026-09-01', FALSE, 4, 1),
-(2, '2026-09-02', FALSE, 6, 2),
-(3, '2026-09-03', TRUE, 8, 3),
-(4, '2026-09-04', FALSE, 5, 4),
-(5, '2026-09-05', FALSE, 3, 1),
-(6, '2026-09-06', FALSE, 7, 2),
-(7, '2026-09-07', FALSE, 6, 3),
-(8, '2026-09-08', FALSE, 4, 4),
-(9, '2026-09-09', TRUE, 8, 1),
-(10, '2026-09-10', FALSE, 5, 2),
-(11, '2026-09-11', FALSE, 6, 3),
-(12, '2026-09-12', FALSE, 4, 4),
-(13, '2026-09-13', FALSE, 8, 1),
-(14, '2026-09-14', FALSE, 5, 2),
-(15, '2026-09-15', TRUE, 7, 3),
-(16, '2026-09-16', FALSE, 6, 4),
-(17, '2026-09-17', FALSE, 4, 1),
-(18, '2026-09-18', FALSE, 5, 2),
-(19, '2026-09-19', FALSE, 8, 3),
-(20, '2026-09-20', FALSE, 6, 4),
-(21, '2026-09-21', FALSE, 4, 1),
-(22, '2026-09-22', TRUE, 8, 2),
-(23, '2026-09-23', FALSE, 5, 3),
-(24, '2026-09-24', FALSE, 7, 4),
-(25, '2026-09-25', FALSE, 3, 1),
-(26, '2026-09-27', FALSE, 6, 2),
-(27, '2026-09-28', FALSE, 5, 3),
-(28, '2026-09-29', TRUE, 8, 4),
-(29, '2026-09-30', FALSE, 4, 1),
-(30, '2026-10-01', TRUE, 7, 2);
+(DEFAULT, '2026-09-01', FALSE, 40, 1),
+(DEFAULT, '2026-09-02', FALSE, 60, 2),
+(DEFAULT, '2026-09-03', TRUE, 80, 3),
+(DEFAULT, '2026-09-04', FALSE, 50, 4),
+(DEFAULT, '2026-09-05', FALSE, 30, 1),
+(DEFAULT, '2026-09-06', FALSE, 70, 2),
+(DEFAULT, '2026-09-07', FALSE, 60, 3),
+(DEFAULT, '2026-09-08', FALSE, 40, 4),
+(DEFAULT, '2026-09-09', TRUE, 80, 1),
+(DEFAULT, '2026-09-10', FALSE, 50, 2),
+(DEFAULT, '2026-09-11', FALSE, 60, 3),
+(DEFAULT, '2026-09-12', FALSE, 40, 4),
+(DEFAULT, '2026-09-13', FALSE, 80, 1),
+(DEFAULT, '2026-09-14', FALSE, 50, 2),
+(DEFAULT, '2026-09-15', TRUE, 70, 3),
+(DEFAULT, '2026-09-16', FALSE, 60, 4),
+(DEFAULT, '2026-09-17', FALSE, 40, 1),
+(DEFAULT, '2026-09-18', FALSE, 50, 2),
+(DEFAULT, '2026-09-19', FALSE, 80, 3),
+(DEFAULT, '2026-09-20', FALSE, 60, 4),
+(DEFAULT, '2026-09-21', FALSE, 40, 1),
+(DEFAULT, '2026-09-22', TRUE, 80, 2),
+(DEFAULT, '2026-09-23', FALSE, 50, 3),
+(DEFAULT, '2026-09-24', FALSE, 70, 4),
+(DEFAULT, '2026-09-25', FALSE, 30, 1),
+(DEFAULT, '2026-09-27', FALSE, 60, 2),
+(DEFAULT, '2026-09-28', FALSE, 50, 3),
+(DEFAULT, '2026-09-29', TRUE, 80, 4),
+(DEFAULT, '2026-09-30', FALSE, 40, 1),
+(DEFAULT, '2026-10-01', TRUE, 70, 2);
 
 INSERT INTO categorie_personnel VALUES
 ('A', 24.00),
@@ -87,36 +88,36 @@ INSERT INTO categorie_personnel VALUES
 ('C', 73.00);
 
 INSERT INTO personnel VALUES
-(1, 'Roy', 'A'),
-(2, 'Anna', 'A'),
-(3, 'Elen', 'A'),
-(4, 'Marcus', 'A'),
-(5, 'Dimitri', 'A'),
-(6, 'Edelgard', 'A'),
-(7, 'Marth', 'A'),
-(8, 'Caeda', 'A'),
-(9, 'Lyn', 'A'),
-(10, 'Ike', 'A'),
-(11, 'Adrian', 'B'),
-(12, 'Simon', 'B'),
-(13, 'Richter', 'B'),
-(14, 'Maria', 'B'),
-(15, 'Hector', 'B'),
-(16, 'Charlotte', 'B'),
-(17, 'John', 'B'),
-(18, 'Eric', 'B'),
-(19, 'Soma', 'B'),
-(20, 'Yoko', 'B'),
-(21, 'Ortega', 'C'),
-(22, 'Iris', 'C'),
-(23, 'Fiolina', 'C'),
-(24, 'Eri', 'C'),
-(25, 'Marco', 'C'),
-(26, 'Tarma', 'C'),
-(27, 'Yangus', 'C'),
-(28, 'Jessica', 'C'),
-(29, 'Angelo', 'C'),
-(30, 'Veronica', 'C');
+(DEFAULT, 'Roy', 'A'),
+(DEFAULT, 'Anna', 'A'),
+(DEFAULT, 'Elen', 'A'),
+(DEFAULT, 'Marcus', 'A'),
+(DEFAULT, 'Dimitri', 'A'),
+(DEFAULT, 'Edelgard', 'A'),
+(DEFAULT, 'Marth', 'A'),
+(DEFAULT, 'Caeda', 'A'),
+(DEFAULT, 'Lyn', 'A'),
+(DEFAULT, 'Ike', 'A'),
+(DEFAULT, 'Adrian', 'B'),
+(DEFAULT, 'Simon', 'B'),
+(DEFAULT, 'Richter', 'B'),
+(DEFAULT, 'Maria', 'B'),
+(DEFAULT, 'Hector', 'B'),
+(DEFAULT, 'Charlotte', 'B'),
+(DEFAULT, 'John', 'B'),
+(DEFAULT, 'Eric', 'B'),
+(DEFAULT, 'Soma', 'B'),
+(DEFAULT, 'Yoko', 'B'),
+(DEFAULT, 'Ortega', 'C'),
+(DEFAULT, 'Iris', 'C'),
+(DEFAULT, 'Fiolina', 'C'),
+(DEFAULT, 'Eri', 'C'),
+(DEFAULT, 'Marco', 'C'),
+(DEFAULT, 'Tarma', 'C'),
+(DEFAULT, 'Yangus', 'C'),
+(DEFAULT, 'Jessica', 'C'),
+(DEFAULT, 'Angelo', 'C'),
+(DEFAULT, 'Veronica', 'C');
 
 INSERT INTO affecter VALUES
 (1, 23), (1, 17),
@@ -153,3 +154,13 @@ INSERT INTO affecter VALUES
 DROP USER IF EXISTS 'javagraf'@'%';
 CREATE USER 'javagraf'@'%' IDENTIFIED BY 'kO7ù6Ha*Hj43';
 GRANT SELECT, INSERT, EXECUTE ON grafenberg01.* TO 'javagraf'@'%';
+
+SELECT aff_inter_id, per_nom
+FROM affecter
+JOIN personnel ON per_id = aff_per_id
+ORDER BY aff_inter_id;
+
+SELECT aff_inter_id, COUNT(*)
+FROM affecter
+GROUP BY aff_inter_id
+ORDER BY aff_inter_id;
