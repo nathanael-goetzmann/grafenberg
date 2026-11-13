@@ -89,7 +89,11 @@ public final class InterventionControleur {
         interventionDAO.insertIntervention(intervention);
     }
     
-    public double getCoutIntervention(int id) throws SQLException {
-        return interventionDAO.callCalculerCoutIntervention(id);
+    public void afficherCoutIntervention(int id) throws SQLException {
+        if (getOneIntervention(id) != null) {
+            System.out.println(interventionDAO.callCalculerCoutIntervention(id) + " euros");
+        } else {
+            System.out.println("L'intervention spécifiée est introuvable.");
+        }
     }
 }
