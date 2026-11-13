@@ -213,40 +213,44 @@ END//
 -- Coût du personnel impliqué
 
 CREATE PROCEDURE p_calculer_cout_personnel (
-	IN p_inter_id INTEGER,
-	OUT p_total DECIMAL(9,2)
+    IN p_inter_id INTEGER,
+    OUT p_total DECIMAL(9,2)
 )
 BEGIN
-	DECLARE p_inter_date DATE;
-	DECLARE p_inter_nuit BOOLEAN;
-	DECLARE p_inter_duree SMALLINT;
-	
-	SELECT inter_date INTO p_inter_date FROM intervention
-	WHERE inter_id = p_inter_id;
-	
-	SELECT inter_nuit INTO p_inter_nuit FROM intervention
-	WHERE inter_id = p_inter_id;
-	
-	SELECT inter_duree INTO p_inter_duree FROM intervention
-	WHERE inter_id = p_inter_id;
-	
-	SELECT SUM(cat_cout_horaire) INTO p_total FROM categorie_personnel
-	JOIN personnel ON per_cat_code = cat_code
-	WHERE per_id IN (
-		SELECT aff_per_id FROM affecter
-		WHERE aff_inter_id = p_inter_id
-	);
-	
-	SET p_total = p_total * p_inter_duree;
-	
-	IF DAYNAME(p_inter_date) = "Saturday"
-	OR DAYNAME(p_inter_date) = "Sunday"
-	OR DATE_FORMAT(p_inter_date, "%m-%d") IN (SELECT DATE_FORMAT(param_jf_date, "%m-%d") FROM param_jours_feries)
-	THEN
-		SET p_total = p_total * 3;
-	ELSEIF p_inter_nuit = TRUE THEN
-		SET p_total = p_total * 2;
-	END IF;
+    DECLARE p_inter_date DATE;
+    DECLARE p_inter_nuit BOOLEAN;
+    DECLARE p_inter_duree SMALLINT;
+
+    DECLARE EXIT HANDLER FOR NOT FOUND
+    BEGIN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Intervention introuvable';
+    END;
+
+    SELECT inter_date, inter_nuit, inter_duree
+    INTO p_inter_date, p_inter_nuit, p_inter_duree
+    FROM intervention
+    WHERE inter_id = p_inter_id;
+
+    SELECT COALESCE(SUM(c.cat_cout_horaire), 0)
+    INTO p_total
+    FROM affecter a
+    JOIN personnel p ON p.per_id = a.aff_per_id
+    JOIN categorie_personnel c ON c.cat_code = p.per_cat_code
+    WHERE a.aff_inter_id = p_inter_id;
+
+    SET p_total = p_total * p_inter_duree;
+
+    IF WEEKDAY(p_inter_date) IN (5, 6)
+       OR DATE_FORMAT(p_inter_date, '%m-%d') IN (
+           SELECT DATE_FORMAT(param_jf_date, '%m-%d')
+           FROM param_jours_feries
+       )
+    THEN
+        SET p_total = p_total * 3;
+    ELSEIF p_inter_nuit = TRUE THEN
+        SET p_total = p_total * 2;
+    END IF;
 END//
 
 -- Somme des charges du bloc, du matériel et du coût horaire du personnel.
