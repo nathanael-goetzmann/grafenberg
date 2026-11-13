@@ -104,6 +104,15 @@ public final class Intervention {
      */
     public ArrayList<Personnel> getLesPersonnel() { return lesPersonnel; }
     
+     /**
+     * Modifie la liste du personnel présent lors de l'intervention.
+     * 
+     * @param lesPersonnel La nouvelle liste du personnel
+     */
+    public void setLesPersonnel(ArrayList<Personnel> lesPersonnel) {
+        this.lesPersonnel = lesPersonnel;
+    }
+    
     /**
      * Modifie l'identifiant de l'intervention.
      * 
