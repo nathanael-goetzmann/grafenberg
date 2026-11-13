@@ -67,8 +67,8 @@ public final class InterventionDAO {
     
     public double callCalculerCoutIntervention(int id) throws SQLException {
         callableCalculerCoutInter.setInt(1, id);
-        callableCalculerCoutInter.registerOutParameter("p_total", java.sql.Types.DECIMAL);
+        callableCalculerCoutInter.registerOutParameter(2, java.sql.Types.DECIMAL);
         callableCalculerCoutInter.execute();
-        return callableCalculerCoutInter.getDouble("p_total");
+        return callableCalculerCoutInter.getDouble(2);
     }
 }

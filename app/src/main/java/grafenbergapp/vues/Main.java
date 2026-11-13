@@ -16,7 +16,7 @@ public final class Main {
             
             System.out.print("\nTest de la procédure stockée : ");
             int id = Integer.parseInt(clavier.nextLine());
-            System.out.println(interventionControleur.getCoutIntervention(id));
+            interventionControleur.afficherCoutIntervention(id);
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (Exception e) {
