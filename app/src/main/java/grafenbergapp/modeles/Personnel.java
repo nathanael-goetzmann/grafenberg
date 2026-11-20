@@ -1,4 +1,4 @@
-package grafenberg.app.modeles;
+package grafenbergapp.modeles;
 
 public final class Personnel {
     
@@ -21,5 +21,14 @@ public final class Personnel {
     public void setNom(String nom) { this.nom = nom; }
     public void setCategoriePersonnel(CategoriePersonnel categoriePersonnel) {
         this.categoriePersonnel = categoriePersonnel;
+    }
+    
+    public void afficher() {
+        System.out.printf(
+                "\n[N°%03d, catégorie %s] %s",
+                id,
+                categoriePersonnel.getCode(),
+                nom
+        );
     }
 }

@@ -1,7 +1,7 @@
-package grafenberg.app.controleurs;
+package grafenbergapp.controleurs;
 
-import grafenberg.app.modeles.BlocDAO;
-import grafenberg.app.modeles.Bloc;
+import grafenbergapp.modeles.BlocDAO;
+import grafenbergapp.modeles.Bloc;
 import java.util.ArrayList;
 import java.sql.SQLException;
 import java.sql.ResultSet;
@@ -10,7 +10,7 @@ public final class BlocControleur {
     
     private final BlocDAO blocDAO;
     
-    public BlocControleur() { blocDAO = new BlocDAO(); }
+    public BlocControleur() throws SQLException { blocDAO = new BlocDAO(); }
     
     private Bloc createBloc(ResultSet resultSetBloc) throws SQLException {
         var bloc = new Bloc();

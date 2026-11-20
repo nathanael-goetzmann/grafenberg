@@ -1,4 +1,4 @@
-package grafenberg.app.modeles;
+package grafenbergapp.modeles;
 
 import java.util.ArrayList;
 import java.sql.Date;
@@ -48,13 +48,13 @@ public final class Intervention {
     }
     
     public void afficher() {
-        String periode = nuit ? "De nuit le " : "De jour le ";
-        System.out.println("\n[N°" + id + ", " + typeOperation.getNom() + "]");
-        System.out.println(periode + date + ", d'une durée de " + duree + " minutes.");
-        System.out.println("Liste du personnel présent :");
+        System.out.printf("\n[N°%03d, %s]", id, typeOperation.getNom());
+        System.out.printf("\nDe %s le %tF, ", nuit ? "nuit" : "jour", date);
+        System.out.printf("d'une durée de %d heure(s).", duree);
+        System.out.println("\nListe du personnel présent :");
         
         for (var personnel : lesPersonnel) {
-            System.out.println("\t* " + personnel.getNom());
+            System.out.printf("\t* %s\n", personnel.getNom());
         }
     }
 }

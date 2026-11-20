@@ -1,4 +1,4 @@
-package grafenberg.app.modeles;
+package grafenbergapp.modeles;
 
 public final class CategoriePersonnel {
     

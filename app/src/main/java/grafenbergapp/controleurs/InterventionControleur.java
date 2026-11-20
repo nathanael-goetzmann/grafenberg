@@ -1,8 +1,8 @@
-package grafenberg.app.controleurs;
+package grafenbergapp.controleurs;
 
-import grafenberg.app.modeles.InterventionDAO;
-import grafenberg.app.modeles.Intervention;
-import grafenberg.app.modeles.Personnel;
+import grafenbergapp.modeles.InterventionDAO;
+import grafenbergapp.modeles.Intervention;
+import grafenbergapp.modeles.Personnel;
 import java.util.ArrayList;
 import java.sql.SQLException;
 import java.sql.ResultSet;
@@ -14,7 +14,7 @@ public final class InterventionControleur {
     private final TypeOperationControleur typeOperationControleur;
     private final PersonnelControleur personnelControleur; 
     
-    public InterventionControleur() {
+    public InterventionControleur() throws SQLException {
         interventionDAO = new InterventionDAO();
         typeOperationControleur = new TypeOperationControleur();
         personnelControleur = new PersonnelControleur();
@@ -32,15 +32,18 @@ public final class InterventionControleur {
                 resultSetInter.getInt("inter_top_id")
         );
         intervention.setTypeOperation(typeOperation);
-
-        var lesPersonnel = new ArrayList<Personnel>();
-        var resultSetPers = interventionDAO.selectTiedPersonnel(intervention.getId());
-        while (resultSetPers.next()) {
-            lesPersonnel.add(
-                    personnelControleur.getOnePersonnel(resultSetPers.getInt("aff_per_id"))
-            );
+        
+        try (var resultSetPers = interventionDAO.selectTiedPersonnel(intervention.getId());) {
+            var lesPersonnel = new ArrayList<Personnel>();
+            
+            while (resultSetPers.next()) {
+                lesPersonnel.add(
+                        personnelControleur.getOnePersonnel(resultSetPers.getInt("aff_per_id"))
+                );
+            }
+            
+            intervention.setLesPersonnel(lesPersonnel);
         }
-        intervention.setLesPersonnel(lesPersonnel);
         
         return intervention;
     }
@@ -57,21 +60,43 @@ public final class InterventionControleur {
         }
     }
     
+    public void afficherAllIntervention() throws SQLException {
+        var lesInterventions = getAllIntervention();
+        
+        if (lesInterventions.isEmpty()) {
+            System.out.println("\nAucune intervention n'est mémorisée à l'heure actuelle.");
+        } else {
+            System.out.println("\nVoici toutes les interventions mémorisées : ");
+            for (var intervention : lesInterventions) { intervention.afficher(); }
+        }
+    }
+    
     public Intervention getOneIntervention(int id) throws SQLException {
         try (var resultSetInter = interventionDAO.selectOneIntervention(id);) {
             return resultSetInter.next() ? createIntervention(resultSetInter) : null;
         }
     }
     
-    public void postOneIntervention(
+    public void afficherOneIntervention(int id) throws SQLException {
+        var intervention = getOneIntervention(id);
+        
+        if (intervention == null) {
+            System.out.println("\nCette intervention n'existe pas.");
+        } else {
+            System.out.println("\nVoici ses informations : ");
+            intervention.afficher();
+        }
+    }
+    
+    public void postIntervention(
             Date date,
             boolean nuit,
             int duree,
             int typeOperationId,
-            ArrayList<Integer> lesPersonnelId
+            ArrayList<Integer> lesPersonnelIds
     ) throws SQLException {
         var lesPersonnel = new ArrayList<Personnel>();
-        for (int id : lesPersonnelId) {
+        for (int id : lesPersonnelIds) {
             lesPersonnel.add(personnelControleur.getOnePersonnel(id));
         }
         
@@ -83,6 +108,17 @@ public final class InterventionControleur {
                 typeOperationControleur.getOneTypeOperation(typeOperationId),
                 lesPersonnel
         );
-        interventionDAO.insertOneIntervention(intervention);
+        interventionDAO.insertIntervention(intervention);
+    }
+    
+    public void afficherCoutIntervention(int id) throws SQLException {
+        if (getOneIntervention(id) == null) {
+            System.out.println("\nL'intervention souhaitée n'existe pas.");
+        } else {
+            System.out.printf(
+                    "\nSon coût de revient est de %.2f euros.\n",
+                    interventionDAO.callCalculerCoutIntervention(id)
+            );
+        }
     }
 }
