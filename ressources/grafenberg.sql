@@ -1,8 +1,8 @@
 -- Création des tables, et insertion de données de test.
 
-DROP DATABASE IF EXISTS grafenberg1;
-CREATE DATABASE grafenberg1;
-USE grafenberg1;
+DROP DATABASE IF EXISTS grafenberg01;
+CREATE DATABASE grafenberg01;
+USE grafenberg01;
 
 CREATE TABLE bloc (
 	bloc_id SMALLINT PRIMARY KEY CHECK (bloc_id > 0),
@@ -177,9 +177,9 @@ INSERT INTO param_jours_feries VALUES
 
 DROP USER IF EXISTS 'javagraf'@'%';
 CREATE USER 'javagraf'@'%' IDENTIFIED BY 'kO7ù6Ha*Hj43';
-GRANT SELECT, EXECUTE ON grafenberg1.* TO 'javagraf'@'%';
-GRANT INSERT ON grafenberg1.intervention TO 'javagraf'@'%';
-GRANT INSERT ON grafenberg1.affecter TO 'javagraf'@'%';
+GRANT SELECT, EXECUTE ON grafenberg01.* TO 'javagraf'@'%';
+GRANT INSERT ON grafenberg01.intervention TO 'javagraf'@'%';
+GRANT INSERT ON grafenberg01.affecter TO 'javagraf'@'%';
 
 -- Création de fonctions pour calculer le coût d'une intervention.
 
@@ -206,7 +206,6 @@ END//
 
 -- Coût du personnel impliqué
 
-<<<<<<< HEAD
 CREATE FUNCTION f_cout_personnel_selon_inter_id (f_inter_id INTEGER)
 RETURNS DECIMAL(9, 2) NOT DETERMINISTIC
 BEGIN
@@ -237,47 +236,6 @@ BEGIN
 	END IF;
 	
 	RETURN f_sum_cat_cout_horaire * f_inter_duree;
-=======
-CREATE PROCEDURE p_calculer_cout_personnel (
-    IN p_inter_id INTEGER,
-    OUT p_total DECIMAL(9,2)
-)
-BEGIN
-    DECLARE p_inter_date DATE;
-    DECLARE p_inter_nuit BOOLEAN;
-    DECLARE p_inter_duree SMALLINT;
-
-    DECLARE EXIT HANDLER FOR NOT FOUND
-    BEGIN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Intervention introuvable';
-    END;
-
-    SELECT inter_date, inter_nuit, inter_duree
-    INTO p_inter_date, p_inter_nuit, p_inter_duree
-    FROM intervention
-    WHERE inter_id = p_inter_id;
-
-    SELECT COALESCE(SUM(c.cat_cout_horaire), 0)
-    INTO p_total
-    FROM affecter a
-    JOIN personnel p ON p.per_id = a.aff_per_id
-    JOIN categorie_personnel c ON c.cat_code = p.per_cat_code
-    WHERE a.aff_inter_id = p_inter_id;
-
-    SET p_total = p_total * p_inter_duree;
-
-    IF WEEKDAY(p_inter_date) IN (5, 6)
-       OR DATE_FORMAT(p_inter_date, '%m-%d') IN (
-           SELECT DATE_FORMAT(param_jf_date, '%m-%d')
-           FROM param_jours_feries
-       )
-    THEN
-        SET p_total = p_total * 3;
-    ELSEIF p_inter_nuit = TRUE THEN
-        SET p_total = p_total * 2;
-    END IF;
->>>>>>> 092c9a953992fb83d5223370ebab095231e959ba
 END//
 
 -- Somme des charges du bloc, du matériel et du coût horaire du personnel.
