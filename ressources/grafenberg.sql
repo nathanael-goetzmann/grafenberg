@@ -1,8 +1,8 @@
 -- Création des tables, et insertion de données de test.
 
-DROP DATABASE IF EXISTS grafenberg01;
-CREATE DATABASE grafenberg01;
-USE grafenberg01;
+DROP DATABASE IF EXISTS grafenberg1;
+CREATE DATABASE grafenberg1;
+USE grafenberg1;
 
 CREATE TABLE bloc (
 	bloc_id SMALLINT PRIMARY KEY CHECK (bloc_id > 0),
@@ -59,36 +59,36 @@ INSERT INTO type_operation VALUES
 (4, 'Urologie', 549.85, 1);
 
 INSERT INTO intervention VALUES
-(DEFAULT, '2025-07-14', FALSE, 1, 1),
-(DEFAULT, '2025-08-05', FALSE, 1, 2),
-(DEFAULT, '2025-08-16', TRUE, 2, 3),
-(DEFAULT, '2025-09-26', FALSE, 1, 4),
-(DEFAULT, '2025-09-30', FALSE, 1, 1),
-(DEFAULT, '2025-10-11', FALSE, 2, 2),
-(DEFAULT, '2025-11-07', FALSE, 1, 3),
-(DEFAULT, '2025-11-13', FALSE, 1, 4),
-(DEFAULT, '2025-11-23', TRUE, 2, 1),
-(DEFAULT, '2025-12-14', FALSE, 1, 2),
-(DEFAULT, '2025-12-28', FALSE, 2, 3),
-(DEFAULT, '2026-01-01', FALSE, 1, 4),
-(DEFAULT, '2026-01-13', FALSE, 2, 1),
-(DEFAULT, '2026-01-19', FALSE, 1, 2),
-(DEFAULT, '2026-02-03', TRUE, 2, 3),
-(DEFAULT, '2026-02-14', FALSE, 1, 4),
-(DEFAULT, '2026-03-12', FALSE, 1, 1),
-(DEFAULT, '2026-03-24', FALSE, 2, 2),
-(DEFAULT, '2026-04-05', FALSE, 2, 3),
-(DEFAULT, '2026-04-11', FALSE, 1, 4),
-(DEFAULT, '2026-04-17', FALSE, 1, 1),
-(DEFAULT, '2026-04-26', TRUE, 2, 2),
-(DEFAULT, '2026-05-16', FALSE, 1, 3),
-(DEFAULT, '2026-05-21', FALSE, 2, 4),
-(DEFAULT, '2026-06-18', FALSE, 2, 1),
-(DEFAULT, '2026-07-06', FALSE, 1, 2),
-(DEFAULT, '2026-07-19', FALSE, 1, 3),
-(DEFAULT, '2026-07-31', TRUE, 2, 4),
-(DEFAULT, '2026-08-02', FALSE, 1, 1),
-(DEFAULT, '2026-08-17', TRUE, 2, 2);
+(DEFAULT, '2025-07-14', FALSE, 5, 1),
+(DEFAULT, '2025-08-05', FALSE, 3, 2),
+(DEFAULT, '2025-08-16', TRUE, 7, 3),
+(DEFAULT, '2025-09-26', FALSE, 3, 4),
+(DEFAULT, '2025-09-30', FALSE, 5, 1),
+(DEFAULT, '2025-10-11', FALSE, 6, 2),
+(DEFAULT, '2025-11-07', FALSE, 4, 3),
+(DEFAULT, '2025-11-13', FALSE, 8, 4),
+(DEFAULT, '2025-11-23', TRUE, 3, 1),
+(DEFAULT, '2025-12-14', FALSE, 5, 2),
+(DEFAULT, '2025-12-28', FALSE, 4, 3),
+(DEFAULT, '2026-01-01', FALSE, 6, 4),
+(DEFAULT, '2026-01-13', FALSE, 7, 1),
+(DEFAULT, '2026-01-19', FALSE, 5, 2),
+(DEFAULT, '2026-02-03', TRUE, 3, 3),
+(DEFAULT, '2026-02-14', FALSE, 5, 4),
+(DEFAULT, '2026-03-12', FALSE, 4, 1),
+(DEFAULT, '2026-03-24', FALSE, 8, 2),
+(DEFAULT, '2026-04-05', FALSE, 7, 3),
+(DEFAULT, '2026-04-11', FALSE, 4, 4),
+(DEFAULT, '2026-04-17', FALSE, 5, 1),
+(DEFAULT, '2026-04-26', TRUE, 7, 2),
+(DEFAULT, '2026-05-16', FALSE, 6, 3),
+(DEFAULT, '2026-05-21', FALSE, 6, 4),
+(DEFAULT, '2026-06-18', FALSE, 4, 1),
+(DEFAULT, '2026-07-06', FALSE, 5, 2),
+(DEFAULT, '2026-07-19', FALSE, 7, 3),
+(DEFAULT, '2026-07-31', TRUE, 8, 4),
+(DEFAULT, '2026-08-02', FALSE, 4, 1),
+(DEFAULT, '2026-08-17', TRUE, 5, 2);
 
 INSERT INTO categorie_personnel VALUES
 ('A', 24.25),
@@ -177,101 +177,84 @@ INSERT INTO param_jours_feries VALUES
 
 DROP USER IF EXISTS 'javagraf'@'%';
 CREATE USER 'javagraf'@'%' IDENTIFIED BY 'kO7ù6Ha*Hj43';
-GRANT SELECT, EXECUTE ON grafenberg01.* TO 'javagraf'@'%';
-GRANT INSERT ON grafenberg01.intervention TO 'javagraf'@'%';
-GRANT INSERT ON grafenberg01.affecter TO 'javagraf'@'%';
+GRANT SELECT, EXECUTE ON grafenberg1.* TO 'javagraf'@'%';
+GRANT INSERT ON grafenberg1.intervention TO 'javagraf'@'%';
+GRANT INSERT ON grafenberg1.affecter TO 'javagraf'@'%';
 
--- Création de procédures pour calculer le coût d'une intervention.
+-- Création de fonctions pour calculer le coût d'une intervention.
 
-DROP PROCEDURE IF EXISTS p_calculer_cout_intervention;
-DROP PROCEDURE IF EXISTS p_calculer_cout_materiel;
-DROP PROCEDURE IF EXISTS p_calculer_cout_personnel;
+DROP FUNCTION IF EXISTS f_cout_intervention_selon_inter_id;
+DROP FUNCTION IF EXISTS f_cout_materiel_selon_inter_id;
+DROP FUNCTION IF EXISTS f_cout_personnel_selon_inter_id;
 
 DELIMITER //
 
 -- Coût du matériel (charges du type d'opération)
 
-CREATE PROCEDURE p_calculer_cout_materiel (
-	IN p_inter_id INTEGER,
-	OUT p_total DECIMAL(9,2)
-)
+CREATE FUNCTION f_cout_materiel_selon_inter_id (f_inter_id INTEGER)
+RETURNS DECIMAL(9, 2) NOT DETERMINISTIC
 BEGIN
-	DECLARE p_inter_heures SMALLINT;
+	DECLARE f_top_charges DECIMAL(7, 2);
+	DECLARE f_inter_heures SMALLINT;
 	
-	SELECT inter_duree INTO p_inter_heures FROM intervention
-	WHERE inter_id = p_inter_id;
-
-	SELECT top_charges INTO p_total FROM type_operation
-	WHERE top_id = (
-		SELECT inter_top_id FROM intervention
-		WHERE inter_id = p_inter_id
-	);
+	SELECT inter_duree, top_charges INTO f_inter_heures, f_top_charges FROM intervention
+	JOIN type_operation ON top_id = inter_top_id
+	WHERE inter_id = f_inter_id;
 	
-	SET p_total = p_total * p_inter_heures;
+	RETURN f_top_charges * f_inter_heures;
 END//
 
 -- Coût du personnel impliqué
 
-CREATE PROCEDURE p_calculer_cout_personnel (
-	IN p_inter_id INTEGER,
-	OUT p_total DECIMAL(9,2)
-)
+CREATE FUNCTION f_cout_personnel_selon_inter_id (f_inter_id INTEGER)
+RETURNS DECIMAL(9, 2) NOT DETERMINISTIC
 BEGIN
-	DECLARE p_inter_date DATE;
-	DECLARE p_inter_nuit BOOLEAN;
-	DECLARE p_inter_duree SMALLINT;
+	DECLARE f_inter_date DATE;
+	DECLARE f_inter_nuit BOOLEAN;
+	DECLARE f_inter_duree SMALLINT;
+	DECLARE f_sum_cat_cout_horaire DECIMAL(7, 2);
 	
-	SELECT inter_date INTO p_inter_date FROM intervention
-	WHERE inter_id = p_inter_id;
+	SELECT inter_date, inter_nuit, inter_duree INTO f_inter_date, f_inter_nuit, f_inter_duree FROM intervention
+	WHERE inter_id = f_inter_id;
 	
-	SELECT inter_nuit INTO p_inter_nuit FROM intervention
-	WHERE inter_id = p_inter_id;
-	
-	SELECT inter_duree INTO p_inter_duree FROM intervention
-	WHERE inter_id = p_inter_id;
-	
-	SELECT SUM(cat_cout_horaire) INTO p_total FROM categorie_personnel
+	SELECT SUM(cat_cout_horaire) INTO f_sum_cat_cout_horaire FROM categorie_personnel
 	JOIN personnel ON per_cat_code = cat_code
 	WHERE per_id IN (
 		SELECT aff_per_id FROM affecter
-		WHERE aff_inter_id = p_inter_id
+		WHERE aff_inter_id = f_inter_id
 	);
 	
-	SET p_total = p_total * p_inter_duree;
-	
-	IF DAYNAME(p_inter_date) = "Saturday"
-	OR DAYNAME(p_inter_date) = "Sunday"
-	OR DATE_FORMAT(p_inter_date, "%m-%d") IN (SELECT DATE_FORMAT(param_jf_date, "%m-%d") FROM param_jours_feries)
+	IF
+		DAYNAME(f_inter_date) IN ("Saturday", "Sunday")
+		OR DATE_FORMAT(f_inter_date, "%m-%d") IN (SELECT DATE_FORMAT(param_jf_date, "%m-%d") FROM param_jours_feries)
 	THEN
-		SET p_total = p_total * 3;
-	ELSEIF p_inter_nuit = TRUE THEN
-		SET p_total = p_total * 2;
+		SET f_sum_cat_cout_horaire = f_sum_cat_cout_horaire * 3;
+	ELSEIF
+		f_inter_nuit = TRUE
+	THEN
+		SET f_sum_cat_cout_horaire = f_sum_cat_cout_horaire * 2;
 	END IF;
+	
+	RETURN f_sum_cat_cout_horaire * f_inter_duree;
 END//
 
 -- Somme des charges du bloc, du matériel et du coût horaire du personnel.
 
-CREATE PROCEDURE p_calculer_cout_intervention (
-	IN p_inter_id INTEGER,
-	OUT p_total DECIMAL(9,2)
-)
+CREATE FUNCTION f_cout_intervention_selon_inter_id (f_inter_id INTEGER)
+RETURNS DECIMAL(9, 2) NOT DETERMINISTIC
 BEGIN
-	DECLARE p_cout_materiel DECIMAL(9,2);
-	DECLARE p_cout_personnel DECIMAL(9,2);
+	DECLARE f_bloc_charges DECIMAL(7,2);
 	
-	CALL p_calculer_cout_materiel(p_inter_id, p_cout_materiel);
-	CALL p_calculer_cout_personnel(p_inter_id, p_cout_personnel);
-	
-	SELECT bloc_charges INTO p_total FROM bloc
+	SELECT bloc_charges INTO f_bloc_charges FROM bloc
 	WHERE bloc_id = (
 		SELECT top_bloc_id FROM type_operation
 		WHERE top_id = (
 			SELECT inter_top_id FROM intervention
-			WHERE inter_id = p_inter_id
+			WHERE inter_id = f_inter_id
 		)
 	);
 	
-	SET p_total = p_total + p_cout_materiel + p_cout_personnel;
+	RETURN f_bloc_charges + f_cout_personnel_selon_inter_id(f_inter_id) + f_cout_materiel_selon_inter_id(f_inter_id);
 END//
 
 DELIMITER ;
