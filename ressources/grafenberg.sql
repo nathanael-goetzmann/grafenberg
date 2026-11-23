@@ -1,8 +1,8 @@
 -- Création des tables, et insertion de données de test.
 
-DROP DATABASE IF EXISTS grafenberg1;
-CREATE DATABASE grafenberg1;
-USE grafenberg1;
+DROP DATABASE IF EXISTS grafenberg01;
+CREATE DATABASE grafenberg01;
+USE grafenberg01;
 
 CREATE TABLE bloc (
 	bloc_id SMALLINT PRIMARY KEY CHECK (bloc_id > 0),
@@ -177,9 +177,9 @@ INSERT INTO param_jours_feries VALUES
 
 DROP USER IF EXISTS 'javagraf'@'%';
 CREATE USER 'javagraf'@'%' IDENTIFIED BY 'kO7ù6Ha*Hj43';
-GRANT SELECT, EXECUTE ON grafenberg1.* TO 'javagraf'@'%';
-GRANT INSERT ON grafenberg1.intervention TO 'javagraf'@'%';
-GRANT INSERT ON grafenberg1.affecter TO 'javagraf'@'%';
+GRANT SELECT, EXECUTE ON grafenberg01.* TO 'javagraf'@'%';
+GRANT INSERT ON grafenberg01.intervention TO 'javagraf'@'%';
+GRANT INSERT ON grafenberg01.affecter TO 'javagraf'@'%';
 
 -- Création de fonctions pour calculer le coût d'une intervention.
 
