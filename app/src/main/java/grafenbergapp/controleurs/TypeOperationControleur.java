@@ -6,16 +6,34 @@ import java.util.ArrayList;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 
+/**
+ * 
+ * @author Nathanaël Goetzmann
+ * @version 1.0
+ * @since 2026-11-13
+ */
 public final class TypeOperationControleur {
     
+    /**  */
     private final TypeOperationDAO typeOperationDAO;
+    /**  */
     private final BlocControleur blocControleur;
     
+    /**
+     * 
+     * @throws SQLException 
+     */
     public TypeOperationControleur() throws SQLException {
         typeOperationDAO = new TypeOperationDAO();
         blocControleur = new BlocControleur();
     }
     
+    /**
+     * 
+     * @param resultSetTypeOp
+     * @return
+     * @throws SQLException 
+     */
     private TypeOperation createTypeOperation(ResultSet resultSetTypeOp) throws SQLException {
         var typeOperation = new TypeOperation();
                 
@@ -29,6 +47,11 @@ public final class TypeOperationControleur {
         return typeOperation;
     }
     
+    /**
+     * 
+     * @return
+     * @throws SQLException 
+     */
     public ArrayList<TypeOperation> getAllTypeOperation() throws SQLException {
         try (var resultSetTypeOp = typeOperationDAO.selectAllTypeOperation();) {
             var lesTypesOperations = new ArrayList<TypeOperation>();
@@ -41,6 +64,12 @@ public final class TypeOperationControleur {
         }
     }
     
+    /**
+     * 
+     * @param id
+     * @return
+     * @throws SQLException 
+     */
     public TypeOperation getOneTypeOperation(int id) throws SQLException {
         try (var resultSetTypeOp = typeOperationDAO.selectOneTypeOperation(id);) {
             return resultSetTypeOp.next() ? createTypeOperation(resultSetTypeOp) : null;
